@@ -3,6 +3,7 @@ package catalog_service
 import (
 	"net/http"
 	"strconv"
+	"time"
 
 	"github.com/PoojaSrinivasan18/catalog-service/database"
 	"github.com/PoojaSrinivasan18/catalog-service/model"
@@ -89,45 +90,45 @@ func DeleteProduct(c *gin.Context) {
 	c.IndentedJSON(http.StatusOK, "Product deleted successfully")
 }
 func UpdateProduct(c *gin.Context) {
-	// Get product_id from query params
-	productID, err := strconv.Atoi(c.Query("productId"))
-	if err != nil {
-		log.Errorf("Invalid product ID: %v", err)
-		c.IndentedJSON(http.StatusBadRequest, gin.H{"message": "Invalid product ID"})
+	var product model.ProductModel
+	database := database.GetDB()
+
+	// Bind JSON body
+	if err := c.BindJSON(&product); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"message": "Invalid request body"})
 		return
 	}
 
-	// Bind incoming JSON body to struct
-	var updatedData model.ProductModel
-	if err := c.ShouldBindJSON(&updatedData); err != nil {
-		log.Errorf("JSON binding error: %v", err)
-		c.IndentedJSON(http.StatusBadRequest, gin.H{"message": "Invalid request data"})
+	// Validate product_id
+	if product.ProductId == 0 {
+		c.JSON(http.StatusBadRequest, gin.H{"message": "Product ID is required"})
 		return
 	}
 
-	db := database.GetDB()
-
-	// Check if product exists
 	var existingProduct model.ProductModel
-	if err := db.First(&existingProduct, productID).Error; err != nil {
-		log.Errorf("Product not found: %v", err)
-		c.IndentedJSON(http.StatusNotFound, gin.H{"message": "Product not found"})
+	// Try to find the product by product_id
+	if err := database.First(&existingProduct, "product_id = ?", product.ProductId).Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"message": "Invalid product ID"})
 		return
 	}
 
 	// Update fields
-	existingProduct.Name = updatedData.Name
-	existingProduct.Price = updatedData.Price
-	existingProduct.Category = updatedData.Category
-	existingProduct.IsActive = updatedData.IsActive
-	existingProduct.Sku = updatedData.Sku
+	existingProduct.Sku = product.Sku
+	existingProduct.Price = product.Price
+	existingProduct.Name = product.Name
+	existingProduct.Category = product.Category
+	existingProduct.IsActive = product.IsActive
+	existingProduct.Description = product.Description
+	existingProduct.UpdatedAt = time.Now()
 
-	// Save the updated record
-	if err := db.Save(&existingProduct).Error; err != nil {
-		log.Errorf("Error updating product: %v", err)
-		c.IndentedJSON(http.StatusInternalServerError, gin.H{"message": "Error updating product"})
+	// Save updated product
+	if err := database.Save(&existingProduct).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"message": "Failed to update product"})
 		return
 	}
 
-	c.IndentedJSON(http.StatusOK, existingProduct)
+	c.JSON(http.StatusOK, gin.H{
+		"message": "Product updated successfully",
+		"product": existingProduct,
+	})
 }
