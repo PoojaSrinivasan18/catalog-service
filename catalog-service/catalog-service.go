@@ -1,12 +1,14 @@
 package catalog_service
 
 import (
-	"github.com/PoojaSrinivasan18/catalog-service/database"
-	"github.com/PoojaSrinivasan18/catalog-service/model"
-	"github.com/apex/log"
-	"github.com/gin-gonic/gin"
 	"net/http"
 	"strconv"
+
+	"github.com/PoojaSrinivasan18/catalog-service/database"
+	"github.com/PoojaSrinivasan18/catalog-service/model"
+
+	"github.com/apex/log"
+	"github.com/gin-gonic/gin"
 )
 
 func GetProductById(c *gin.Context) {

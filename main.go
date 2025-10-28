@@ -5,6 +5,7 @@ import (
 	"github.com/PoojaSrinivasan18/catalog-service/common"
 	"github.com/PoojaSrinivasan18/catalog-service/database"
 	"github.com/PoojaSrinivasan18/catalog-service/model"
+
 	"github.com/apex/log"
 	"github.com/gin-gonic/gin"
 )
