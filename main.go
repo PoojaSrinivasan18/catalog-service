@@ -45,7 +45,7 @@ func main() {
 	router.GET("/api/getallproduct", catalog_service.GetAllProducts)
 	router.POST("/api/addproduct", catalog_service.AddProduct)
 	router.DELETE("/api/deleteproduct", catalog_service.DeleteProduct)
-	router.PUT("/api/updateproduct", catalog_service.UpdateProduct)
+	router.PATCH("/api/updateproduct", catalog_service.UpdateProduct)
 
 	router.Run(":3000")
 
