@@ -2,7 +2,6 @@ package database
 
 import (
 	"fmt"
-	"os"
 	"time"
 
 	"github.com/PoojaSrinivasan18/catalog-service/common"
@@ -42,12 +41,7 @@ func SetupDB(configuration *common.Configuration) error {
 		log.Error("Host is Empty in Env Variable")
 	}
 
-	pw := os.Getenv("APP_DB_PASSWORD")
-	if pw != "" {
-		password = pw
-	} else {
-		return fmt.Errorf("Password not found")
-	}
+	password = configuration.Database.Password
 
 	// data source name
 	dsn := fmt.Sprintf(

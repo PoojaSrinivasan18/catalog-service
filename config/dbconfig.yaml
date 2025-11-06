@@ -3,5 +3,5 @@ Database:
   Dbname: catalog_db
   username: poojasrinivasan
   password: password
-  host: localhost
+  host: postgres
   port: 5432
