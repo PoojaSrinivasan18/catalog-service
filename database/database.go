@@ -41,8 +41,6 @@ func SetupDB(configuration *common.Configuration) error {
 		log.Error("Host is Empty in Env Variable")
 	}
 
-	password = configuration.Database.Password
-
 	// data source name
 	dsn := fmt.Sprintf(
 		"host=%s user=%s password=%s dbname=%s port=%s sslmode=disable",
